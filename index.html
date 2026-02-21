@@ -3642,7 +3642,7 @@
                                             📥
                                             <input 
                                                 type="file" 
-                                                accept=".csv"
+                                                accept=".csv,text/csv,text/plain,application/csv,application/vnd.ms-excel"
                                                 style={{display: 'none'}}
                                                 onChange={(e) => {
                                                     handleCSVImport(e);
@@ -3650,6 +3650,23 @@
                                                 }}
                                             />
                                         </label>
+                                    </div>
+
+                                    <div className="fab-item">
+                                        <span className="fab-label">Coller CSV</span>
+                                        <button
+                                            className="fab-button import"
+                                            style={{background: '#8a7a5a'}}
+                                            onClick={() => {
+                                                setCsvMode('import');
+                                                setCsvData([]);
+                                                setCsvError('');
+                                                setCsvModalOpen(true);
+                                                setFabMenuOpen(false);
+                                            }}
+                                        >
+                                            📋
+                                        </button>
                                     </div>
 
                                     <div className="fab-item">
@@ -4094,6 +4111,45 @@
                                             onClick={confirmImport}
                                         >
                                             {importMode === 'add' ? 'Ajouter' : 'Remplacer'}
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+
+                            {csvMode === 'import' && csvData.length === 0 && (
+                                <>
+                                    <div style={{marginBottom: '12px', color: '#6a6a6a', fontSize: '13px', textAlign: 'center'}}>
+                                        Si le sélecteur de fichier ne fonctionne pas, colle ton CSV ci-dessous :
+                                    </div>
+                                    <textarea
+                                        placeholder="Colle ici le contenu de ton fichier CSV..."
+                                        style={{
+                                            width: '100%',
+                                            minHeight: '120px',
+                                            padding: '10px',
+                                            borderRadius: '8px',
+                                            border: '1px solid #d4af6a',
+                                            fontFamily: 'monospace',
+                                            fontSize: '12px',
+                                            resize: 'vertical',
+                                            marginBottom: '10px'
+                                        }}
+                                        onChange={(e) => {
+                                            const text = e.target.value.trim();
+                                            if (text.length > 10) {
+                                                const parsed = parseCSV(text);
+                                                if (parsed.length > 0) {
+                                                    setCsvData(parsed);
+                                                    setCsvError('');
+                                                } else {
+                                                    setCsvError('Format CSV non reconnu');
+                                                }
+                                            }
+                                        }}
+                                    />
+                                    <div className="button-group">
+                                        <button type="button" className="btn btn-cancel" onClick={() => setCsvModalOpen(false)}>
+                                            Annuler
                                         </button>
                                     </div>
                                 </>
